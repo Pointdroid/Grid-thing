@@ -5,17 +5,22 @@ def main(stdscr):
     debug = False
     grid_size = 10
     default_grid_icon = "X"
-
+    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
+    activeEntitys = []
     curses.noecho()
     curses.curs_set(1)  
     stdscr.clear()
+    
+    activeEntitys.append(EntityObject("Player", 20))
+
 
     
     UserRequest="NOT X"
     mode="regular"
     while UserRequest != "x":
-        grid = CreateGrid(grid_size, default_grid_icon)
-        PlaceGrid(stdscr, grid, True)
+        # grid = CreateGrid(grid_size, default_grid_icon)
+        # PlaceGrid(stdscr, grid, True)
+        PlaceMessage(stdscr, activeEntitys[0].health, 1)
         stdscr.refresh()
         UserRequest = GetUserInput(stdscr)
         match(mode):                
@@ -39,8 +44,12 @@ def main(stdscr):
     
 
 
-
-def PlaceMessage( stdscr ,message,location = 0, refresh=False, x_offset = 0, y_offset = 0):
+class EntityObject():
+    def __init__(self, name, health):
+        self.name = name
+        self.health = health
+        
+def PlaceMessage( stdscr ,message,location = 0, refresh=False, x_offset = 0, y_offset = 0, color="white"):
     message = str(message)
     match(location):
         case 0: #middle of screen
@@ -49,7 +58,11 @@ def PlaceMessage( stdscr ,message,location = 0, refresh=False, x_offset = 0, y_o
             y = height // 2 + y_offset
             stdscr.addstr(y, x, message)
         case 1: #top left of screen
-            stdscr.addstr(y_offset, x_offset, message)
+            y =y_offset
+            x = x_offset
+    match (color):
+        case "white":
+            stdscr.addstr(y, x, message)
     if refresh:
         stdscr.refresh()
 def PlaceGrid(stdscr , grid,refresh=0, x_offset = 0, y_offset =0):
